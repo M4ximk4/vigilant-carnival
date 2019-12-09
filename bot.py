@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 
 import telebot
+from flask import Flask, request
+import os
+
 bot = telebot.TeleBot("965129932:AAFslbLkrzWhbTY-B3RCovRny6m3fsHwXJU")
+TOKEN = "965129932:AAFslbLkrzWhbTY-B3RCovRny6m3fsHwXJU"
+server = Flask(__name__)
+
 
 keyboardopen = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True)
 keyboardopen.row('Каталог товаров', 'Информация')
@@ -155,5 +161,30 @@ def Five_message(message):
     bot.reply_to(message, "Если всё введено правильно, мы с тобой свяжемся!")
     bot.send_message(message.chat.id, '*FINALLY:*\n'+'\n'.join(user_dict[message.chat.id]), parse_mode='markdown')
 
+   
+
+@server.route('/' + TOKEN, methods=['POST'])
+def getMessage():
+    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
+    return "!", 200
+
+
+@server.route("/")
+def webhook():
+    bot.remove_webhook()
+    bot.set_webhook(url='' + TOKEN)
+    return "!", 200
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 if __name__ == '__main__':
-     bot.polling(none_stop=True)
+     server.run(host="0.0.0.0", port=int(os.environ.get('PORT',5000)))
