@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 
 import telebot
-from flask import Flask, request
-import os
-
 bot = telebot.TeleBot("965129932:AAFslbLkrzWhbTY-B3RCovRny6m3fsHwXJU")
-TOKEN = "965129932:AAFslbLkrzWhbTY-B3RCovRny6m3fsHwXJU"
-server = Flask(__name__)
-
 
 keyboardopen = telebot.types.ReplyKeyboardMarkup(one_time_keyboard=True)
 keyboardopen.row('Каталог товаров', 'Информация')
@@ -35,6 +29,8 @@ def open_text(message):
     bot.send_message(message.chat.id, 'Здравствуйте! У нас самые низкие цены в городе в сочетании с высоким качеством и оперативной доставкой. '                                      'Что вас интересует?', reply_markup=keyboardopen)
     pass
 
+
+
 @bot.message_handler(func=lambda message: message.text == "Информация")
 def info_message(message):
     bot.send_message(message.from_user.id, 'Бесплатная Доставка осуществляется с интервалом не менее одного часа, круглосуточно, при заказе от 1000 рублей. '
@@ -45,6 +41,7 @@ def info_message(message):
                                            '--Безналичным путем: на карту Сбербанк, ВТБ или с любой карты через сервис Яндекс-касса. '
                                            ''
                                            'Телефон отдела продаж +7 (995) 598-75-22', reply_markup=keyboardinfo)
+
 
 
 @bot.message_handler(func=lambda message: message.text == "Вернуться в начало")
@@ -68,6 +65,8 @@ def One_message(message):
     bot.send_photo(message.from_user.id, photo='https://drive.google.com/open?id=1eZiIhw1FeAhoqCwIDj1UgVtQdvWO2EMC')
     bot.send_message(message.from_user.id, 'Выберите понравившийся набор. Чтобы вернуться в начало нажмите /start.', reply_markup=keyboard11)
     pass
+
+
 
 @bot.message_handler(func=lambda message: message.text == "Шары из латекса")
 def Two_message(message):
@@ -132,6 +131,10 @@ def ThreeTen_message(message):
     user_dict[message.chat.id][1] = message.text
     bot.send_message(message.from_user.id, 'Выберите кол-во', reply_markup=keyboard3)
 
+
+
+
+
 @bot.message_handler(func=lambda message: message.text == "1")
 def FourOne_message(message):
     user_dict[message.chat.id][2] = message.text
@@ -161,20 +164,12 @@ def Five_message(message):
     bot.reply_to(message, "Если всё введено правильно, мы с тобой свяжемся!")
     bot.send_message(message.chat.id, '*FINALLY:*\n'+'\n'.join(user_dict[message.chat.id]), parse_mode='markdown')
 
-   
-
-@server.route('/' + TOKEN, methods=['POST'])
-def getMessage():
-    bot.process_new_updates([telebot.types.Update.de_json(request.stream.read().decode("utf-8"))])
-    return "!", 200
 
 
-@server.route("/")
-def webhook():
-    bot.remove_webhook()
-    bot.set_webhook(url='https://nuseichastochnoprokatit1.herokuapp.com/' + TOKEN)
-    return "!", 200
-    
-    
+
+
+
+
+
 if __name__ == '__main__':
-     server.run(host="0.0.0.0", port=int(os.environ.get('PORT',5000)))
+     bot.polling(none_stop=True)
